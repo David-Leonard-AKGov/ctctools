@@ -2,13 +2,13 @@
 % Please edit documentation in R/chinookmodelfunctions.R
 \name{readCCC}
 \alias{readCCC}
-\title{(Calibration Performance) Import CCC Files}
+\title{(Calibration Performance) Import checkCCC Files}
 \usage{
 readCCC(filepath, data.types = c("AEQ", "cohort", "termrun", "escape"),
   stocks.key = NA, startingyear = 1, finalyear = 9999)
 }
 \arguments{
-\item{filepath}{A character vector of the CCC files to be imported. See details}
+\item{filepath}{A character vector of the csv files output from checkCCC program. See details}
 
 \item{data.types}{See details}
 
@@ -23,14 +23,14 @@ imported. Default is 9999, meaning all years before 9999.}
 A list, with one element per CCC (calibration) file.
 }
 \description{
-Import one or more CCC files into a list.
+Import one or more checkCCC output files into a list.
 }
 \details{
 Need details.
 }
 \examples{
 \dontrun{
-### read in CCC files ###
+### read in checkCCC files ###
 filename <- list.files(data.pathname, pattern = "CCC")
 filepath <- paste(data.pathname,  filename, sep='/')
 ccc.list <- sapply(filepath, readCCC, USE.NAMES = FALSE)

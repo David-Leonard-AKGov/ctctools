@@ -883,13 +883,13 @@ plotFCSvsCCC <- function(data.combined, samplesize.min=10, results.path = ".",
 
 
 
-#' @title (Calibration Performance) Import CCC Files
+#' @title (Calibration Performance) Import checkCCC Files
 #'
-#' @description Import one or more CCC files into a list.
+#' @description Import one or more checkCCC output files into a list.
 #'
 #' @details Need details.
 #'
-#' @param filepath A character vector of the CCC files to be imported. See details
+#' @param filepath A character vector of the csv files output from checkCCC program. See details
 #' @param data.types See details
 #' @param stocks.key See details
 #' @param startingyear An integer.
@@ -901,7 +901,7 @@ plotFCSvsCCC <- function(data.combined, samplesize.min=10, results.path = ".",
 #'
 #' @examples
 #' \dontrun{
-#' ### read in CCC files ###
+#' ### read in checkCCC files ###
 #' filename <- list.files(data.pathname, pattern = "CCC")
 #' filepath <- paste(data.pathname,  filename, sep='/')
 #' ccc.list <- sapply(filepath, readCCC, USE.NAMES = FALSE)
@@ -1973,7 +1973,7 @@ writeCalibrationTable5 <- function(metrics, ranking.method, results.path,...){
 #' writeTableOfDifferences(metrics, ranking, results.path = model.list$results.path, groupingby=model.list$groupingby, tabletype = 'table4')
 #' }
 writeTableOfDifferences <- function(metrics, ranking.method, results.path, tabletype=c('table3', 'table4'), ...){
-	
+
   args <- list(...)
   groupingby <- args$groupingby
   ctctools:::.makeDir(results.path)

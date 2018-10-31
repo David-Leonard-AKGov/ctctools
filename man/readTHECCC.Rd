@@ -4,15 +4,61 @@
 \alias{readTHECCC}
 \title{Read the model output CCC raw file ("THE" CCC file)}
 \usage{
-readTHECCC(filename, df.rows = 25, agegroups.n = 4)
+readTHECCC(filename, stocks = NULL, fisheries = NULL,
+  newmodel = c(NA, TRUE, FALSE), agegroups.n = 4, fisheries.n = NA)
 }
 \arguments{
-\item{agegroups.n}{}
+\item{stocks}{A data frame that could have the columns named "stockname" &
+"stocknum", other columns can be included (origin, region, etc). If NA,
+then this data frame is defined inside the function based on the newmodel
+argument below. If NULL (the defualt) then no stock definition is used and
+only stock number is exported in the results.}
+
+\item{fisheries}{A data frame with columns named "fisheryname" & "fishnum"
+other columns can be included (origin, region, etc). If NA then this data
+frame is defined inside the function based on the newmodel.  If NULL (the
+defualt) then no fishery definition is used and only fishery number is
+exported in the results.}
+
+\item{newmodel}{A Boolean. If TRUE, this relies on the new definition of 40
+stocks and 48 fisheries. If FALSE, this uses the definition of 30 stocks
+and 25 fisheries. If NA (the default) no stock or fishery definition
+columns are linked to the data.}
+
+\item{agegroups.n}{An integer of length one. The number of ages found in row
+1 of each data set. Default is 4.}
+
+\item{fisheries.n}{An integer of length one. The number of fisheries. The
+default is NA. If the fisheries argument above (a data frame of the
+fisheries) is NA or user defined then fisheries.n can remain NA as the
+function will estimate this value from the fisheries definition data frame.
+If the fisheries argument is NULL (no fishery definitions needed) then
+fisheries.n must be included (likely 25 or 40 fisheries).}
 }
 \value{
-A list comprising as many lists as data sets in the CCC file.
+A list of five lists. First element is the stock definition data
+  frame. The second element is the fishery definition data frame. The third
+  element is a list comprising as many elements as data sets in the CCC file.
+  A single data set is a stock-year combination. If there are 40 years and 30
+  stocks, the list will have a length of 40*30=1200. Each CCC element is a
+  list of 7 elements. The forth element is a data frame ("data.pop"), which
+  has data for all years and stocks combined. The fifth element is a data
+  frame ("data.fishery"), which has data for all stocks, years, and fisheries
+  combined.
 }
 \description{
-This is a draft function. Variable naming isn't useful. But data
-  structure is easily manipulated in R.
+
+}
+\examples{
+\dontrun{
+#new stock and fishery:
+data.ccc <- readTHECCC("2017p.ccc", stocks=NA, fisheries=NA, newmodel = TRUE)
+
+#or current/old stock and fishery:
+data.ccc <- readTHECCC("1702p.ccc", stocks=NA, fisheries=NA, newmodel = FALSE)
+length(data.ccc)
+names(data.ccc)
+length(data.ccc$data.ccc)
+str(data.ccc$data.ccc[[1]])
+}
 }
