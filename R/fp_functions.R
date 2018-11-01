@@ -522,6 +522,8 @@ write_fpa <- function(fpdat, spfi, stocks, comment=NA, filename=NA){
 
   #remove 2nd through 4th stock number:
   fpdat.wide$stocknumber[fpdat.wide$age != min(fpdat.wide$age)] <- NA
+  #drop the age column:
+  fpdat.wide <- subset(fpdat.wide, select = -age)
 
   #create 2 digit year for column names
   year.short <- substr(sort(unique(fpdat.append$return.year)), 3,4)
