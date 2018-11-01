@@ -27,15 +27,15 @@
 #'
 #' @description
 #'
-#' @return A list of five lists. First element is the stock definition data
-#'   frame. The second element is the fishery definition data frame. The third
-#'   element is a list comprising as many elements as data sets in the CCC file.
-#'   A single data set is a stock-year combination. If there are 40 years and 30
-#'   stocks, the list will have a length of 40*30=1200. Each CCC element is a
-#'   list of 7 elements. The forth element is a data frame ("data.pop"), which
-#'   has data for all years and stocks combined. The fifth element is a data
-#'   frame ("data.fishery"), which has data for all stocks, years, and fisheries
-#'   combined.
+#' @return A list of six lists. First element is the CCC filename. Second
+#'   element is the stock definition data frame. The third element is the
+#'   fishery definition data frame. The forth element is a list comprising as
+#'   many elements as data sets in the CCC file. A single data set is a
+#'   stock-year combination. If there are 40 years and 30 stocks, the list will
+#'   have a length of 40*30=1200. Each CCC element is a list of 7 elements. The
+#'   fifth element is a data frame ("data.pop"), which has data for all years
+#'   and stocks combined. The sixth element is a data frame ("data.fishery"),
+#'   which has data for all stocks, years, and fisheries combined.
 #' @export
 #'
 #' @examples
@@ -48,7 +48,7 @@
 #' length(data.ccc)
 #' names(data.ccc)
 #' length(data.ccc$data.ccc)
-#' str(data.ccc$data.ccc[[1]])
+#' str(data.ccc$data.pop)
 #' }
 readTHECCC <- function(filename, stocks=NULL, fisheries=NULL, newmodel=c(NA, TRUE, FALSE), agegroups.n=4, fisheries.n=NA){
 
@@ -219,7 +219,7 @@ readTHECCC <- function(filename, stocks=NULL, fisheries=NULL, newmodel=c(NA, TRU
     if(is.na(fisheries.n)) {cat("\n\nThe fisheries definition data frame is absent, so fisheries.n argument must have a value (likely 25 or 40). Function stopped without results.\n\n")
       return(NULL)
       }
-  }else{  
+  }else{
   	fisheries.n <- nrow(fisheries)
   }
 
@@ -272,7 +272,7 @@ readTHECCC <- function(filename, stocks=NULL, fisheries=NULL, newmodel=c(NA, TRU
   if(!is.null(fisheries)) data.fishery <- merge(data.fishery, fisheries, all.x=TRUE)
   data.fishery <- data.fishery[order(data.fishery$stocknum, data.fishery$year, data.fishery$fishnum, data.fishery$age),]
 
-  return(list(stocks=stocks, fisheries=fisheries, data.ccc=dat.list, data.pop=data.pop, data.fishery=data.fishery))
+  return(list(filename=filename, stocks=stocks, fisheries=fisheries, data.ccc=dat.list, data.pop=data.pop, data.fishery=data.fishery))
 
 }#END readTHECCC
 

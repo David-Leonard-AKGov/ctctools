@@ -513,6 +513,7 @@ write_fpa <- function(fpdat, spfi, stocks, comment=NA, filename=NA){
   dat.future <- merge(future.df, dat.future)
   fpdat.append <- rbind(fpdat[,colnames(dat.future)], dat.future)
 
+  fpdat.append$fp <- round(fpdat.append$fp,6)
   fpdat.wide <- reshape(fpdat.append, direction="wide", idvar = c("stocknumber", "age"), timevar = "return.year")
 
   #sort cols:
