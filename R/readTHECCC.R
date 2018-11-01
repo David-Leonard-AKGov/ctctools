@@ -215,7 +215,13 @@ readTHECCC <- function(filename, stocks=NULL, fisheries=NULL, newmodel=c(NA, TRU
   #if the user includes a fishery definition data frame in the argument (or it
   #got created). If neither is true then fisheries.n must have been included as
   #an argument:
-  if(!is.null(fisheries)) fisheries.n <- nrow(fisheries)
+  if(is.null(fisheries)) {
+    if(is.na(fisheries.n)) {cat("\n\nThe fisheries definition data frame is absent, so fisheries.n argument must have a value (likely 25 or 40). Function stopped without results.\n\n")
+      return(NULL)
+      }
+  }else{  
+  	fisheries.n <- nrow(fisheries)
+  }
 
   dat.tmp <- readLines(filename)
   dat.rows <- length(dat.tmp)
@@ -256,14 +262,14 @@ readTHECCC <- function(filename, stocks=NULL, fisheries=NULL, newmodel=c(NA, TRU
   	data.frame(year=x$year, stocknum=x$stocknum, age=unique(x$data.df$age), aeq=x$aeq, coh=x$coh, terminalrun=x$terminalrun, escapement=x$escapement, stringsAsFactors = FALSE)
   })
   data.pop <- do.call("rbind", data.pop)
-  data.pop <- merge(data.pop, stocks, all.x=TRUE)
+  if(!is.null(stocks)) data.pop <- merge(data.pop, stocks, all.x=TRUE)
   data.pop <- data.pop[order(data.pop$stocknum, data.pop$year, data.pop$age),]
 
   data.fishery <- lapply(dat.list, function(x){
   	data.frame(year=x$year, stocknum=x$stocknum, x$data.df, stringsAsFactors = FALSE)
   })
   data.fishery <- do.call("rbind", data.fishery)
-  data.fishery <- merge(data.fishery, fisheries, all.x=TRUE)
+  if(!is.null(fisheries)) data.fishery <- merge(data.fishery, fisheries, all.x=TRUE)
   data.fishery <- data.fishery[order(data.fishery$stocknum, data.fishery$year, data.fishery$fishnum, data.fishery$age),]
 
   return(list(stocks=stocks, fisheries=fisheries, data.ccc=dat.list, data.pop=data.pop, data.fishery=data.fishery))
