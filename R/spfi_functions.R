@@ -1548,3 +1548,110 @@ writeSPFItable6.6 <- function(spfi.output, data.catch, comments=NULL, filename =
 
 }#END writeSPFItable6.6
 
+
+
+#' @title Write .stf text file.
+#'
+#' @param x A data frame with columns: "StockID" (3 letter acronym), and
+#'   (likely) four columns named age2...age4. The values of the age columns will
+#'   be 0 or 1, depending on whether that stock-age should be included in the
+#'   SPFI estimation. An example of argument is found in the example below.
+#' @param stocks.df A data frame with column names: "Stock Number","Stock Name",
+#'   "StockID","Start Age". If NA (the defualt) then the function builds a data
+#'   frame from the 'new' list of 31 stocks.
+#' @param filename A character vector of length one. The default is NA. If NA
+#'   then the stf ouput is sent to stdout().
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' spfi.flag <- data.frame(matrix(ncol=5, byrow = TRUE, data = c(
+#' 	"ATN", 0, 0, 0, 0,
+#' 	"BQR", 0, 1, 1, 0,
+#' 	"CHI", 0, 1, 1, 0
+#' 	)), stringsAsFactors = FALSE)
+#'
+#' 	colnames(spfi.flag) <- c("StockID", "age.index2", "age.index3", "age.index4", "age.index5")
+#' 	spfi.flag <- type.convert(spfi.flag, as.is = TRUE)
+#' 	writeSTFfile(x = spfi.flag, filename = "test.stf")
+#'
+#' }
+writeSTFfile <- function(x, stocks.df=NA, filename=NA){
+	if(is.na(filename)) filename <- stdout()
+
+  if(is.na(stocks.df)){
+    #this is the 31 stock list
+    stocks.df <- data.frame(matrix(byrow = TRUE, ncol=4,
+  c(1, "Atnarko Summer", "ATN",2,
+    2, "Big Qualicum", "BQR",2,
+    3, "Chilliwack", "CHI",2,
+    4, "Cowlitz Fall Tule", "CWF",2,
+    5, "Elk River", "ELK",2,
+    6, "George Adams Fall Fingerling", "GAD",2,
+    7, "Harrison", "HAR",2,
+    8, "Kitsumkalum Summer", "KLM",3,
+    9, "Columbia Lower River Hatchery", "LRH",2,
+    10, "Lewis River Wild", "LRW",2,
+    11, "Nicola River Spring", "NIC",3,
+    12, "Nisqually Fall Fingerling", "NIS",2,
+    13, "Northern SE AK", "NSA",3,
+    14, "Puntledge Summer", "PPS",2,
+    15, "Queets Fall Fingerling", "QUE",2,
+    16, "Quinsam Fall", "QUI",2,
+    17, "Robertson Creek", "RBT",2,
+    18, "Samish Fall Fingerling", "SAM",2,
+    19, "Lower Shuswap River Summers", "SHU",2,
+    20, "Skagit Spring Fingerling", "SKF",2,
+    21, "Spring Creek Tule", "SPR",2,
+    22, "South Puget Sound Fall Fingerling", "SPS",2,
+    23, "South Puget Sound Fall Yearling", "SPY",2,
+    24, "Salmon River", "SRH",2,
+    25, "Southern SE AK", "SSA",3,
+    26, "Skagit Summer Fingerling", "SSF",2,
+    27, "Columbia Summers", "SUM",2,
+    28, "Transboundary Rivers", "TBR",3,
+    29, "Upriver Brights", "URB",2,
+    30, "White River Spring Yearling", "WRY",2,
+    31, "Willamette Spring", "WSH",3)), stringsAsFactors = FALSE)
+  }#END if(is.na(stocks.df))
+  stocks.df <- type.convert(stocks.df)
+  colnames(stocks.df) <- c("Stock Number","Stock Name", "StockID","Start Age")
+
+  stockmeta <- list()
+  stockmeta$intNumStocks$value <- nrow(stocks.df)
+  stockmeta$intNumStocks$description <- "Number of Stocks"
+  stockmeta$intNumFisheries$value <- 79
+  stockmeta$intNumFisheries$description <- "Number of Fisheries"
+  stockmeta$BYfirst$value <- 1971
+  stockmeta$BYfirst$description <- "First Brood Year"
+  stockmeta$BYlast$value <- 2016
+  stockmeta$BYlast$description <- "Last Brood Year"
+
+  #stockmeta$NUMspfistocks$value <- length(unique(unlist(apply(x[3:ncol(x)],2,function(x2) which(x2==1)))))
+  stockmeta$NUMspfistocks$value <- nrow(stocks.df)
+  stockmeta$NUMspfistocks$description <- "Number of Stocks in the SPFI"
+
+  flag.df <- merge(x, stocks.df)
+  flag.df <- flag.df[,c("Stock Number", colnames(flag.df)[grep(pattern = "age", colnames(flag.df))])]
+  flag.colnames <- c("Stock Number", 'StartAge' , "StartAge+1", "StartAge+2", "StartAge+3")
+  colnames(flag.df) <- flag.colnames[1:ncol(flag.df)]
+  flag.df <- flag.df[order(flag.df$`Stock Number`),]
+
+  #write the file
+  options(warn = -1)
+ file.create(filename)
+ meta.df <- lapply(stockmeta, function(stockmeta.line) data.frame(stockmeta.line))
+ meta.df <- do.call("rbind", meta.df)
+ write.table(meta.df, file = filename, quote = FALSE, row.names = FALSE, col.names =FALSE, sep = ", ")
+ write.table(flag.df, file=filename, append = TRUE, sep=", ", row.names = FALSE, quote = FALSE)
+write.table(stocks.df, file=filename, append = TRUE, sep=", ", row.names = FALSE, quote = FALSE)
+options(warn = 0)
+
+ cat(c("\n", filename, "\n", "has been written.", " \n "))
+
+}#END writeSTFfile
+
+
+
